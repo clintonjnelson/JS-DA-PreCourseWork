@@ -30,7 +30,7 @@ ancestryArray.forEach( function(person) {
   byName[person.name] = person;
 });
 
-// Average of an array of values
+// Average of an array of values. Returns a number.
 function avg(arrayOfValues) {
   // Sum array values
   var total = arrayOfValues.reduce( function total( prevVal, currVal, currIndex, origArray){
@@ -40,6 +40,12 @@ function avg(arrayOfValues) {
   return ( total / arrayOfValues.length );
 }
 
+// Round number to two decimal places. ( 59.343253 => 59.34 )
+function roundTwoDecimals(number) {
+  return ( Math.round(number * 100) / 100 );
+}
+
+// Calculate average Age Difference. Returns a number.
 function averageMotherChildAgeDifference(peopleByName){
   var mother, motherBirthYear, childBirthYear;
   var differences = [];
@@ -59,7 +65,8 @@ function averageMotherChildAgeDifference(peopleByName){
   return avg(differences);
 }
 
-console.log( "Average Mother-Child age difference is " + averageMotherChildAgeDifference(byName) + " years." );
+console.log( "Average Mother-Child age difference is " +
+    roundTwoDecimals( averageMotherChildAgeDifference(byName) ) + " years." );
 
 //
 //////////////////////////////// Historical Life Expectancy //////////////////////////////////
@@ -81,13 +88,12 @@ function averageAgePerCentury(peopleByName){
     century = centuryByDeathYear(died);
 
     ageCenturyObj[century+"th"] ? ageCenturyObj[century+"th"].push(age) : ( ageCenturyObj[century+"th"] = [age] );
-    console.log(ageCenturyObj);
   }
 
   // Inherit ageCenturyObj properties and overwrite their values for averages
   centuryAvgObj = Object.create(ageCenturyObj);
   for (century in ageCenturyObj) {
-    centuryAvgObj[century] = Math.round( avg(ageCenturyObj[century]) * 100 ) / 100;
+    centuryAvgObj[century] = roundTwoDecimals( avg(ageCenturyObj[century]) );
   }
 
   return centuryAvgObj;
@@ -97,6 +103,7 @@ console.log( "Average ages per century: ", averageAgePerCentury(byName) );
 
 //
 //////////////////////////////// Every & Then Some //////////////////////////////////
+// Returns true ONLY if array meets test requirements for ALL values
 function every(arrayParam, callback){
   for(var i=0; i < arrayParam.length; i++){
     if( !callback(arrayParam[i], i, arrayParam) ) {
@@ -107,7 +114,7 @@ function every(arrayParam, callback){
 }
 var myArray = [1,2,3,4,5];
 
-Testing every()
+// Testing every()
 console.log("Should say true: " + every(myArray, function(currElement, currIndex, origArray){
   return currElement < 6;
 }));
@@ -116,6 +123,7 @@ console.log("Should say false: " + every(myArray, function(currElement, currInde
 }));
 
 
+// Returns true if array meets test requirements for ANY value
 function some(arrayParam, callback){
   for(var i=0; i < arrayParam.length; i++){
     if( callback(arrayParam[i], i, arrayParam) ) {
@@ -125,7 +133,7 @@ function some(arrayParam, callback){
   return false;  // if NONE true, return false
 }
 
-Testing some()
+// Testing some()
 console.log("Should say true: " + some(myArray, function(currElement, currIndex, origArray){
   return currElement < 2;
 }));
@@ -134,34 +142,8 @@ console.log("Should say false: " + some(myArray, function(currElement, currIndex
 }));
 
 
-// Some of the biggest things learned from these books
-// JS - The Good Parts
-  // Observation
-    // You can become a better programmer by using ONLY THE GOOD PARTS of a language, so define your own subset. Avoid cases that are "sometimes useful", but othertimes dangerous. It's the programmer's burden to avoid a language's weaknesses or risky areas.
-    // Your entire application should live inside of ONE Global Variable to provide
-    // Never use "new". Use the prototypical pattern of delegation instead!
-  // Question
-    // If JS is so bad, why doesn't someone else come up with a new version? If Netscape can launch JS in its version 2.0 and change the web that quickly, why should we say it can't be done. Sure, it can't be done instantly, but if Netscape can do it, Google should be able to launch a properly-designed competitor language and change the webscape. Alternatively, why not "fix" JS and re-launch as a ner version that doesn't support prior versions. Prior versions will hang around a while, and eventually fall away.
 
-// YDKJS - Scpes & Closures
-  // Observation
-    // Inner scopes will overwrite outer scopes if you don't call/decare new with var.
-    // ALWAYS NAME FUNCTIONS - no reason not to.
-    // "let" is the new block scope variable. "Let" is great for emphasizing block scope, and is useful for garbage collection. Remember block scopes are not hoisted.
-    // The process of compilation consists of 3 main phases: tokenizing, parsing into program structure tree, and generating executable code. The scope process is a process of LHS/RHS lookups vis engine/compiler/scope. Hoisting starts the process declaring variables into their relative scopes, then lookups occur for hoisted declarations in their relative scopes, an finally executing accordingly.
-  // Question
-    // Does shadowing with variables cause the same issues Douglas Crockford mentioned iwth shadowing properties/methods in prototypes? Seems rather similar, as variables are essentially the same as properties. Wouldn't it cause brittle code here, too?
-
-// YDKJS - this & Object Prototype
-  // Observation
-    // There are four rules (ie: a 4-step process) to determining "this". First, default binding (global scope). Second, implicit binding occurs when there is a context object. Third, explicit binding when "this" was forces through assignment. Fourth, "new" binding when using a function through constructor.
-    // Process for determining "this" is asking: First, was "new" called - if so, new object is "this". Second, was hard-binding applied - if so, explicitly specified object is "this". Third, is function called with context - if so, context object is "this". Fourth, if none of others apply, "this" is the global object (or "undefined" if in strict mode).
-  // Question
-    // Author mentions at least one "workaround". How can we as younger programmers tell when a "workaround" is goog JS coding, or when it's really BAD JS coding & we should instead be using a better coding pattern? How do we know which side of the fence we're on?
-
-
-// Chapter 6 - Exercises
-
+// Eloquent JS Chapter 6 - Exercises
 ////////////////////////////////A Vector Type//////////////////////////////////
 
 // function Vector(x, y) {
@@ -198,3 +180,28 @@ console.log("Should say false: " + some(myArray, function(currElement, currIndex
 // console.log(second.length);   // Should still be 1.4142 => no override allowed
 
 
+/////////////////////// READING ASSIGNMENTS TAKE-AWAYS /////////////////////////
+// Some of the biggest things learned from these books
+// JS - The Good Parts
+  // Observation
+    // You can become a better programmer by using ONLY THE GOOD PARTS of a language, so define your own subset. Avoid cases that are "sometimes useful", but othertimes dangerous. It's the programmer's burden to avoid a language's weaknesses or risky areas.
+    // Your entire application should live inside of ONE Global Variable to provide
+    // Never use "new". Use the prototypical pattern of delegation instead!
+  // Question
+    // If JS is so bad, why doesn't someone else come up with a new version? If Netscape can launch JS in its version 2.0 and change the web that quickly, why should we say it can't be done. Sure, it can't be done instantly, but if Netscape can do it, Google should be able to launch a properly-designed competitor language and change the webscape. Alternatively, why not "fix" JS and re-launch as a ner version that doesn't support prior versions. Prior versions will hang around a while, and eventually fall away.
+
+// YDKJS - Scpes & Closures
+  // Observation
+    // Inner scopes will overwrite outer scopes if you don't call/decare new with var.
+    // ALWAYS NAME FUNCTIONS - no reason not to.
+    // "let" is the new block scope variable. "Let" is great for emphasizing block scope, and is useful for garbage collection. Remember block scopes are not hoisted.
+    // The process of compilation consists of 3 main phases: tokenizing, parsing into program structure tree, and generating executable code. The scope process is a process of LHS/RHS lookups vis engine/compiler/scope. Hoisting starts the process declaring variables into their relative scopes, then lookups occur for hoisted declarations in their relative scopes, an finally executing accordingly.
+  // Question
+    // Does shadowing with variables cause the same issues Douglas Crockford mentioned iwth shadowing properties/methods in prototypes? Seems rather similar, as variables are essentially the same as properties. Wouldn't it cause brittle code here, too?
+
+// YDKJS - this & Object Prototype
+  // Observation
+    // There are four rules (ie: a 4-step process) to determining "this". First, default binding (global scope). Second, implicit binding occurs when there is a context object. Third, explicit binding when "this" was forces through assignment. Fourth, "new" binding when using a function through constructor.
+    // Process for determining "this" is asking: First, was "new" called - if so, new object is "this". Second, was hard-binding applied - if so, explicitly specified object is "this". Third, is function called with context - if so, context object is "this". Fourth, if none of others apply, "this" is the global object (or "undefined" if in strict mode).
+  // Question
+    // Author mentions at least one "workaround". How can we as younger programmers tell when a "workaround" is goog JS coding, or when it's really BAD JS coding & we should instead be using a better coding pattern? How do we know which side of the fence we're on?
